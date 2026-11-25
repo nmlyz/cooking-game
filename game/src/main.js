@@ -8,7 +8,7 @@
 // and sets window.__shotReady for a screenshot.
 import { BEST_KEY, FIELD, INGREDIENTS, STEP } from './config.js';
 import { createRandom } from './random.js';
-import { createWorld, EVENT_BURNT, EVENT_CHOPPED, EVENT_ERROR, EVENT_GRILL_DONE, EVENT_OVER, EVENT_POT_DONE, EVENT_SERVED, EVENT_WALKOUT } from './world.js';
+import { createWorld, EVENT_BURNT, EVENT_CHOPPED, EVENT_ERROR, EVENT_GRILL_DONE, EVENT_OVER, EVENT_POT_DONE, EVENT_RUSH, EVENT_SERVED, EVENT_WALKOUT } from './world.js';
 import { ACTION_CONFIRM, ACTION_MUTE, ACTION_PAUSE, ACTION_SERVE, ACTION_TRASH, createInput } from './input.js';
 import { createAudio } from './audio.js';
 import { createRenderer, SCREEN_OVER, SCREEN_PAUSED, SCREEN_PLAY, SCREEN_TITLE } from './render.js';
@@ -95,6 +95,7 @@ function runGame() {
       audio.serve();
       audio.coin();
     }
+    if (events & EVENT_RUSH) audio.rush();
     if (events & EVENT_WALKOUT) audio.walkout();
     if (events & EVENT_GRILL_DONE) audio.grillDone();
     if (events & EVENT_POT_DONE) audio.grillDone();

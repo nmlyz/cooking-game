@@ -128,6 +128,12 @@ export function createAudio() {
     tick() {
       tone(980, 0.05, 'square', 0.06);
     },
+    rush() {
+      // Rising three-note alarm for the Lunch Rush.
+      tone(659, 0.14, 'square', 0.12);
+      tone(880, 0.14, 'square', 0.12, 0.13);
+      tone(1318, 0.24, 'square', 0.13, 0.26);
+    },
     win() {
       [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.22, 'triangle', 0.15, i * 0.11));
     },

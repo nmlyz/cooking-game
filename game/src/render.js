@@ -155,14 +155,20 @@ export function drawIngredient(ctx, item, x, y, r) {
       break;
     }
     case 'egg': {
+      // Whole egg: cream shell with a warm outline so it reads on the
+      // pale bin behind it.
       ctx.fillStyle = '#fff3d6';
       ctx.beginPath();
       ctx.ellipse(0, 0, r * 0.8, r, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#e8cf9a';
+      ctx.strokeStyle = '#c9a86a';
+      ctx.lineWidth = Math.max(2, r * 0.12);
       ctx.beginPath();
-      ctx.ellipse(0, 0, r * 0.62, r * 0.8, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, r * 0.8, r, 0, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.fillStyle = '#f2d06b';
+      circle(ctx, 0, -r * 0.15, r * 0.2);
+      ctx.fill();
       break;
     }
     case 'egg_chopped': {
@@ -393,6 +399,8 @@ export function createRenderer(canvas) {
       ctx.fillStyle = barColor;
       rr(ctx, x + 12, y + 76, Math.max(12, (w - 24) * frac), 12, 6);
       ctx.fill();
+      // During the Lunch Rush every ticket pays half again.
+      if (state.rush) text(ctx, 'RUSH ×1.5', x + w - 12, y + 99, 11, '#b57a28', 800, 'right');
       ctx.restore();
     });
   }
@@ -726,12 +734,14 @@ export function createRenderer(canvas) {
     ctx.fillRect(0, 58, FIELD.width, 4);
     text(ctx, 'SIZZLE & SERVE', 24, 38, 24, '#ffe9b8', 800);
     text(ctx, 'Bistro Rush', 236, 38, 13, '#d9b380', 600);
-    // Timer.
+    // Timer — during the Lunch Rush it turns red and reads RUSH.
     const urgent = state.timeLeft <= 30;
-    ctx.fillStyle = urgent ? '#ff6b5e' : '#fff8e7';
+    const rushPulse = state.rush ? 0.5 + 0.5 * Math.sin(state.elapsed * 6) : 0;
+    ctx.fillStyle = state.rush ? (rushPulse > 0.5 ? '#d32f2f' : '#e8542f') : urgent ? '#ff6b5e' : '#fff8e7';
     rr(ctx, 560, 9, 160, 40, 10);
     ctx.fill();
-    text(ctx, `TIME ${mmss(state.timeLeft)}`, 640, 38, 24, urgent ? '#d32f2f' : '#2e1c0e', 800, 'center');
+    text(ctx, state.rush ? `RUSH ${mmss(state.timeLeft)}` : `TIME ${mmss(state.timeLeft)}`, 640, 38, 24, (state.rush || urgent) ? '#ffffff' : '#2e1c0e', 800, 'center');
+    if (state.rush) text(ctx, '×1.5', 724, 37, 13, '#ffd94d', 800);
     // Coins / served / combo.
     text(ctx, `Coins  ${state.coins}`, 760, 38, 20, '#ffd94d', 800);
     text(ctx, `Served  ${state.served}`, 920, 38, 20, '#fff8e7', 700);
@@ -794,6 +804,7 @@ export function createRenderer(canvas) {
       text(ctx, dish.blurb, x + 76, 418, 11, '#8a6d4b', 600, 'center');
     });
     text(ctx, 'Click a bin or press 1–8 to grab food  •  Click a station to use it  •  S rings the bell', 640, 472, 14, PALETTE.text, 600, 'center');
+    text(ctx, 'Final 45 seconds: LUNCH RUSH — every order pays 1.5×!', 640, 452, 14, '#e8542f', 800, 'center');
     ctx.fillStyle = '#e8542f';
     rr(ctx, 490, 496, 300, 48, 24);
     ctx.fill();

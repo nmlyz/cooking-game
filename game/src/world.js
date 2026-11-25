@@ -4,7 +4,8 @@
 import {
   BIN, CHEF, CHOP_SECONDS, COMBO_WINDOW, DISHES, DISH_ORDER, GRILL,
   INGREDIENTS, MAX_ORDERS, MAX_WALKOUTS, ORDER_PATIENCE, ORDER_SPAWN,
-  POT, PREPARED, SHIFT_SECONDS, STATIONS,
+  POT, PREPARED, RUSH_PAY_MULTIPLIER, RUSH_SECONDS, RUSH_SPAWN_FACTOR,
+  SHIFT_SECONDS, STATIONS,
 } from './config.js';
 import { pick } from './random.js';
 
@@ -16,6 +17,7 @@ export const EVENT_BURNT = 16;
 export const EVENT_CHOPPED = 32;
 export const EVENT_ERROR = 64;
 export const EVENT_POT_DONE = 128;
+export const EVENT_RUSH = 256;
 
 const INGREDIENT_KEYS = Object.keys(INGREDIENTS);
 
@@ -49,6 +51,7 @@ export function createWorld(random) {
       walkouts: 0,
       combo: 0,
       comboTimer: 0,
+      rush: false,
       orders: [],
       hand: null,
       grill: [null, null],
@@ -289,7 +292,9 @@ export function createWorld(random) {
     state.combo = state.comboTimer > 0 ? state.combo + 1 : 1;
     state.comboTimer = COMBO_WINDOW;
     const comboBonus = (state.combo - 1) * 2;
-    const earned = dish.price + tip + comboBonus;
+    // Lunch Rush: the dish price pays half again while the rush is on.
+    const rushBonus = state.rush ? Math.round(dish.price * (RUSH_PAY_MULTIPLIER - 1)) : 0;
+    const earned = dish.price + tip + comboBonus + rushBonus;
     state.coins += earned;
     state.served += 1;
     state.servedDishes.push(bestOrder.dish);
@@ -299,7 +304,8 @@ export function createWorld(random) {
     const bell = STATIONS.bell;
     sparkle(bell.x + bell.w / 2, bell.y + 30, '#ffd94d');
     floater(bell.x + bell.w / 2, bell.y - 12, `+${earned} coins`, '#ffd94d');
-    if (tip >= 4) floater(bell.x + bell.w / 2, bell.y - 38, 'Speedy service!', '#8be28b');
+    if (rushBonus > 0) floater(bell.x + bell.w / 2, bell.y - 38, `RUSH +${rushBonus}!`, '#ff8a3d');
+    else if (tip >= 4) floater(bell.x + bell.w / 2, bell.y - 38, 'Speedy service!', '#8be28b');
     return EVENT_SERVED;
   }
 
@@ -342,6 +348,14 @@ export function createWorld(random) {
     state.elapsed += dt;
     state.timeLeft = Math.max(0, SHIFT_SECONDS - state.elapsed);
 
+    // Lunch Rush: the last stretch of the shift, orders come faster and
+    // pay half again — the finale the whole shift builds toward.
+    if (!state.rush && state.timeLeft <= RUSH_SECONDS) {
+      state.rush = true;
+      say('LUNCH RUSH! Orders pay 1.5× — keep serving!');
+      events |= EVENT_RUSH;
+    }
+
     // Chef walks toward the last station used.
     const chef = state.chef;
     const dx = chef.targetX - chef.x;
@@ -355,9 +369,10 @@ export function createWorld(random) {
       chef.bob += dt * 2;
     }
 
-    // Order spawns, faster as the shift goes on.
+    // Order spawns, faster as the shift goes on — and faster still in the rush.
     const progress = state.elapsed / SHIFT_SECONDS;
-    const interval = ORDER_SPAWN.start + (ORDER_SPAWN.end - ORDER_SPAWN.start) * progress;
+    const interval = (ORDER_SPAWN.start + (ORDER_SPAWN.end - ORDER_SPAWN.start) * progress)
+      * (state.rush ? RUSH_SPAWN_FACTOR : 1);
     state.spawnTimer -= dt;
     if (state.spawnTimer <= 0) {
       spawnOrder();

@@ -31,6 +31,13 @@ export const CHOP_SECONDS = 1.6;
 /** Combo: serving again within this many seconds raises the combo. */
 export const COMBO_WINDOW = 20;
 
+/** Lunch Rush: the final stretch of the shift, when orders pay extra. */
+export const RUSH_SECONDS = 45;
+/** Orders spawn this much faster during the rush (multiplier on the interval). */
+export const RUSH_SPAWN_FACTOR = 0.55;
+/** Serve pay multiplier during the rush (1.5 = +50% on the dish price). */
+export const RUSH_PAY_MULTIPLIER = 1.5;
+
 /** How many customers may walk out before the shift is ruined (0 = never ends early). */
 export const MAX_WALKOUTS = 5;
 

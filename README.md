@@ -4,7 +4,7 @@
 
 # Sizzle & Serve — Bistro Rush
 
-A complete cooking game that runs in a desktop browser from static files, with no network request. You run a small bistro through the lunch rush: orders appear on the board, and you chop, grill and boil ingredients, stack them on plates, and ring the bell to serve before each customer's patience runs out.
+A complete cooking game that runs in a desktop browser from static files, with no network request. You run a small bistro through the lunch rush: orders appear on the board, and you chop, grill and boil ingredients, stack them on plates, and ring the bell to serve before each customer's patience runs out. The final 45 seconds turn into the Lunch Rush — orders arrive faster and every dish pays 1.5×, so the shift is won or lost in the finale.
 
 ## How to play
 
@@ -15,6 +15,7 @@ Serve every order on the board before its patience bar empties. A full 3-minute 
 - **Stack a plate** — click a plate with a prepared ingredient in hand. Click a plate with an empty hand to take the top item back off.
 - **Serve** — when a plate holds exactly what a ticket asks for, it glows gold. Click the bell, or press `S`, to serve it and collect coins plus a speed tip.
 - **Keep the rush going** — serving quickly builds a combo worth extra coins. Customers who wait too long walk out, and five walkouts end the shift early.
+- **Lunch Rush** — with 45 seconds left the timer turns red and reads RUSH: new orders arrive almost twice as fast, every ticket is marked ×1.5, and each dish pays half again on top of its price, tip and combo. It is the best moment to cash in — and the easiest moment to lose a customer.
 
 ## The menu
 
@@ -24,6 +25,8 @@ Serve every order on the board before its patience bar empties. A full 3-minute 
 | Cheese Burger | bun, grilled patty, cheese, chopped tomato | 22 |
 | Garden Salad | chopped lettuce, chopped tomato, chopped egg | 14 |
 | Golden Ramen | boiled noodles, broth, chopped egg | 20 |
+
+During the Lunch Rush each dish pays 1.5× its listed price.
 
 ## Controls
 
@@ -44,11 +47,11 @@ Best shift score is kept in your browser only.
 
 - `main.ts` — the hand-in program (Node 22): copies `game/` and `screenshots/` to `/output` and writes `dossier.json`.
 - `game/index.html` — the game page.
-- `game/src/config.js` — tuning, recipes, stations, colours.
-- `game/src/world.js` — orders, stations, plates, scoring, the shift clock.
+- `game/src/config.js` — tuning, recipes, stations, colours, Lunch Rush numbers.
+- `game/src/world.js` — orders, stations, plates, scoring, the shift clock, the Lunch Rush.
 - `game/src/render.js` — all drawing: kitchen, order board, chef, plates, screens.
 - `game/src/input.js` — mouse and keyboard.
-- `game/src/audio.js` — synthesised sounds (chop, sizzle, bell, coins).
+- `game/src/audio.js` — synthesised sounds (chop, sizzle, bell, coins, rush alarm).
 - `game/src/shots.js` — staged screenshot scenes.
 - `game/src/main.js` — boot and the fixed-step loop.
 - `game/src/random.js` — seeded random for repeatable games.

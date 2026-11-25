@@ -40,18 +40,21 @@ export function stageShot(name, world) {
   world.startShift();
   state.screen = 'play';
   if (name === 'play') {
-    // Mid-rush: 2:14 left, 46 coins, burger half-built on plate 1, a patty
-    // sizzling on the grill, noodles boiling, three tickets waiting.
-    state.elapsed = 46;
-    state.timeLeft = 134;
-    state.coins = 46;
-    state.served = 3;
-    state.combo = 2;
+    // Lunch Rush, mid-finale: 0:38 left, the timer reads RUSH, four
+    // tickets wait, a patty sizzles on the grill, noodles boil, a burger
+    // is half-built on plate 1 and the rush bonus is on every ticket.
+    state.elapsed = 142;
+    state.timeLeft = 38;
+    state.rush = true;
+    state.coins = 148;
+    state.served = 9;
+    state.combo = 3;
     state.comboTimer = 12;
     state.orders = [
-      { id: 3, dish: 'burger', patience: 38, maxPatience: 55, reward: 18 },
-      { id: 4, dish: 'ramen', patience: 24, maxPatience: 55, reward: 20 },
-      { id: 5, dish: 'salad', patience: 47, maxPatience: 55, reward: 14 },
+      { id: 11, dish: 'burger', patience: 30, maxPatience: 55, reward: 18 },
+      { id: 12, dish: 'ramen', patience: 18, maxPatience: 55, reward: 20 },
+      { id: 13, dish: 'salad', patience: 44, maxPatience: 55, reward: 14 },
+      { id: 14, dish: 'cheeseburger', patience: 38, maxPatience: 55, reward: 22 },
     ];
     state.grill = [{ item: 'patty', t: 4.2 }, null];
     state.pot = { item: 'noodle', t: 3.1 };
@@ -60,9 +63,9 @@ export function stageShot(name, world) {
     state.chef.x = 780;
     state.chef.targetX = 780;
     state.chef.facing = 1;
-    state.hint = 'Stack the tomato, then ring the bell!';
+    state.hint = 'LUNCH RUSH! Orders pay 1.5× — keep serving!';
     state.hintTimer = 30;
-    state.servedDishes = ['burger', 'salad'];
+    state.servedDishes = ['burger', 'salad', 'ramen'];
     return { screen: SCREEN_PLAY, best: 214 };
   }
   // serve: a finished cheese burger on plate 1 matches ticket #6, the bell
